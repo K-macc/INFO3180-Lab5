@@ -1,17 +1,20 @@
 from . import db
-from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 
 class Movie(db.Model):
     __tablename__ = 'movies'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(80))
-    last_name = db.Column(db.String(80))
-    username = db.Column(db.String(80), unique=True)
-    password = db.Column(db.String(256))
 
-    def __init__(self, first_name, last_name, username, password):
-        self.first_name = first_name
-        self.last_name = last_name
-        self.username = username
-        self.password = generate_password_hash(password)
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    poster = db.Column(db.String(255), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __init__(self, title, description, poster, created_at):
+        self.title = title
+        self.description = description
+        self.poster = poster
+        self.created_at = created_at
+        
+    def __repr__(self):
+        return '<Movie %r>' % (self.title)
