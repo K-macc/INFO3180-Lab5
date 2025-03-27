@@ -8,7 +8,8 @@ This file creates your application.
 from app import app, db
 from app.models import Movie
 from app.forms import MovieForm
-from flask import render_template, request, jsonify, send_file
+from flask_wtf.csrf import generate_csrf
+from flask import render_template, request, jsonify, send_file  # Ensure 'request' is imported correctly
 from werkzeug.utils import secure_filename
 import os
 
@@ -29,24 +30,30 @@ def movies():
         title = form.title.data
         description = form.description.data
         poster = form.poster.data
-        
+    
         filename = secure_filename(poster.filename)
-        poster.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        poster_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        poster.save(poster_path)
         
-        new_movie = Movie(title=title, description=description, poster=poster, created_at=None)
+        new_movie = Movie(title=title, description=description, poster=filename, created_at=None)
         db.session.add(new_movie)
         db.session.commit()
         
+        
         return jsonify({
             "message":"Movie Succesfully Added",
-            "title": title,
-            "poster": poster,
-            "description": description
+            "title": new_movie.title,
+            "poster": new_movie.poster,
+            "description": new_movie.description
         })
-        
+         
     return jsonify({
         "errors": form_errors(form)
     })
+    
+@app.route('/api/v1/csrf-token', methods=['GET'])
+def get_csrf():
+    return jsonify({'csrf_token': generate_csrf()})
 
 ###
 # The functions below should be applicable to all Flask apps.
