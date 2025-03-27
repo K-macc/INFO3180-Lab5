@@ -10,7 +10,7 @@ const handleRefreshPage = () => {
 
 <template>
     <div class="movie-form-view">
-        <h1>Add a New Movie</h1>
+        <h2>ADD A NEW MOVIE</h2>
         <MovieForm @refreshPage="handleRefreshPage"/>
     </div>
 </template>
@@ -19,5 +19,9 @@ const handleRefreshPage = () => {
 .movie-form-view {
     margin-left: 10px;
     width: 99%;
+}
+
+h2 {
+    font-family: 'Lato','Montserrat','Poppins';
 }
 </style>
