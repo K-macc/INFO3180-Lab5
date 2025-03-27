@@ -17,4 +17,4 @@ class Movie(db.Model):
         self.created_at = created_at
         
     def __repr__(self):
-        return '<Movie %r>' % (self.title)
+        return '<Movie: %r>' % (self.title)
