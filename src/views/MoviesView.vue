@@ -38,7 +38,7 @@ onMounted(() => {
 <template>
 
 <div class="movie-list">
-    <h2>Movies</h2>
+    <h1>Movies</h1>
     <div v-if="movies.length === 0">Loading movies...</div>
     <div v-else class="movies-listed">
         <div v-for="movie in movies" :key="movie.id" class="movie">
@@ -55,9 +55,11 @@ onMounted(() => {
 
 
 <style scoped>
-h2 {
+h1 {
     text-align: left;
     margin-left: 50px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: bold;
 }
 
 .movie-list {
@@ -84,9 +86,15 @@ h2 {
   height: 250px;
 }
 
+.movie:hover {
+  transform: scale(1.05); /* Slightly enlarges the card */
+  box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.2); /* Increases shadow */
+  border-color: #aaa; /* Changes border color */
+}
+
 .movie-img {
   width: 170px; 
-  height: 250px;
+  height: 248px;
 }
 
 .movie-title {

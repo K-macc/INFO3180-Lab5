@@ -26,6 +26,7 @@ const description = ref('');
 const poster = ref(null);
 const success_message = ref('');
 const errors = ref([]);
+const reload = ref(false);
 
 const handleFileChange = (event) => {
     poster.value = event.target.files[0];
@@ -51,6 +52,7 @@ const saveMovie = () => {
         .then(function (data) {
             if (data.errors){
                 errors.value = data.errors;
+                emit('flashMessage',errors);
             } else{
                 success_message.value = "Movie Successfully Added";
                 title.value = '';
@@ -60,7 +62,7 @@ const saveMovie = () => {
             }
         })
         .catch(function (error) {
-            errors.value = ["An unexpected error occurred."];
+            emit('refreshPage');
             console.error("Fetch error: ", error);
         });
 }
@@ -72,15 +74,21 @@ const saveMovie = () => {
 <template>
     <div class="movie-form-div">
 
-        <div v-if="success_message" class="success-message">
-            {{ success_message }}
-        </div>
+        <transition name="fade">
+            <div v-if="!reload">
+                <div v-if="success_message" class="success-message">
+                    {{ success_message }}
+                </div>
+            </div>
+        </transition>
 
-        <div v-if="errors.length" class="error-message">
-            <ul>
-                <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
-            </ul>
-        </div>
+        <transition name="fade">
+            <div v-if="errors.length" class="error-message">
+                <ul>
+                    <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
+                </ul>
+            </div>
+        </transition>
 
         <form id="movieForm" @submit.prevent="saveMovie" class="movie-form" enctype="multipart/form-data">
             <div class="form-group mb-3">
@@ -94,7 +102,10 @@ const saveMovie = () => {
             </div>
     
             <div class="form-group mb-3">
-                <label for="poster" class="form-label">Poster</label>
+                <div class ="poster">
+                    <label for="poster" class="form-label">Poster</label>
+                    <label for="poster-type" class="form-label poster-type">(PNG,JPG,JPEG)</label>
+                </div>
                 <input id="poster" name="poster" type="file" @change="handleFileChange" accept="image/png, image/jpeg"  class="form-control" />
             </div>
     
@@ -123,6 +134,14 @@ const saveMovie = () => {
     border-radius: 5px;
 }
 
+.fade-leave-active {
+  transition: opacity 1s ease-in-out;
+}
+
+.fade-leave-to {
+  opacity: 0;
+}
+
 textarea {
     width: 100%; 
     height: 200px;
@@ -131,20 +150,40 @@ textarea {
     border: 1px solid #ccc;
 }
 
+textarea:hover {
+    border-color: #888; /* Darker border on hover */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Slight glow effect */
+}
+
 input {
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #ccc; 
 }
 
+input:hover {
+    border-color: #888; /* Darker border on hover */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Slight glow effect */
+}
+
 label {
     font-weight: bold;
-    font-family: 'Lato','Montserrat','Poppins';
+    font-family: "Georgia", "Times New Roman", serif;
     font-size: 18px;
     padding-top: 10px;
 }
 
 .form-control {
     font-family: 'Helvetica','Roboto','Open Sans';
+}
+
+.poster-type {
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+.btn-primary {
+    margin-top: 30px;
+    width: 100px;
 }
 </style>
