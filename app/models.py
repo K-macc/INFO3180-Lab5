@@ -1,14 +1,13 @@
-from . import db
-from datetime import datetime
+from app import db
 
 class Movie(db.Model):
     __tablename__ = 'movies'
-
+    
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.Text, nullable=True)
-    poster = db.Column(db.String(255), nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    title = db.Column(db.String(80), nullable=False)
+    description = db.Column(db.String(255), nullable=False)
+    poster = db.Column(db.String(120), nullable=False)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 
     def __init__(self, title, description, poster, created_at):
         self.title = title

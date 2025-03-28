@@ -45,15 +45,15 @@ def movies():
             "title": new_movie.title,
             "poster": new_movie.poster,
             "description": new_movie.description
-        })
+        }),201
          
     return jsonify({
         "errors": form_errors(form)
-    })
+    }),400
     
 @app.route('/api/v1/csrf-token', methods=['GET'])
 def get_csrf():
-    return jsonify({'csrf_token': generate_csrf()})
+    return jsonify({'csrf_token': generate_csrf()}), 200
 
 
 @app.route("/api/v1/posters/<filename>")
@@ -62,13 +62,13 @@ def get_posters(filename):
 
 
 @app.route("/api/v1/movies", methods=['GET'])
-def get_movies():
-    movies = Movie.query.all()
+def add_movies():
+    movies = db.session.query(Movie).all()
     movies_list = []
     
     for movie in movies:
         movies_list.append({
-            "id": movie.id,
+            "id": movie.id, 
             "title": movie.title,
             "description": movie.description,
             "poster": f"/api/v1/posters/{movie.poster}"
@@ -118,4 +118,6 @@ def add_header(response):
 @app.errorhandler(404)
 def page_not_found(error):
     """Custom 404 page."""
-    return render_template('404.html'), 404
+    error = str(error)
+    error = error.split(":")
+    return render_template('404.html',error = error), 404

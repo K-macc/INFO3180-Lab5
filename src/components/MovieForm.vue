@@ -1,7 +1,19 @@
 <script setup>
-import { ref, onMounted, defineEmits } from 'vue';
+import { ref, onMounted, defineEmits, nextTick } from 'vue';
 
-const emit = defineEmits(['refreshPage']);
+
+/**
+ * Emits a custom event named 'flashMessage'.
+ * This event can be used to send a flash message to a parent component.
+ * 
+ * Usage:
+ * - The parent component should listen for the 'flashMessage' event.
+ * - The event can carry a payload if needed, such as a message string or object.
+ * 
+ * Example:
+ * <MovieForm @flashMessage="handleFlashMessage" />
+ */
+const emit = defineEmits(['flashMessage']);
 
 let csrf_token = ref("");
 
@@ -24,10 +36,16 @@ onMounted(() => {
 const title = ref('');
 const description = ref('');
 const poster = ref(null);
+const fileInput = ref(null);
 const success_message = ref('');
 const errors = ref([]);
-const reload = ref(false);
 
+/**
+ * Handles the change event for a file input element.
+ * Updates the `poster` reactive variable with the selected file.
+ *
+ * @param {Event} event - The file input change event.
+ */
 const handleFileChange = (event) => {
     poster.value = event.target.files[0];
 };
@@ -54,11 +72,25 @@ const saveMovie = () => {
                 errors.value = data.errors;
                 emit('flashMessage',errors);
             } else{
-                success_message.value = "Movie Successfully Added";
+                success_message.value = "Movie Successfully Added!!!";
+                /**
+                 * Resets the form fields for the movie form component.
+                 * - Clears the `title` and `description` input fields by setting their values to an empty string.
+                 * - Resets the file input field by setting its value to `null` using Vue's `nextTick` to ensure
+                 *   the DOM is updated before making the change.
+                 */
                 title.value = '';
                 description.value = '';
-                poster.value = null;
-                emit('refreshPage');
+                nextTick(() => {
+                    fileInput.value.value = null;
+                })
+                /**
+                 * Emits a 'flashMessage' event with a success message.
+                 * 
+                 * @event flashMessage
+                 * @param {string} success_message - The message to be displayed as a flash notification.
+                 */
+                emit('flashMessage',success_message);
             }
         })
         .catch(function (error) {
@@ -74,14 +106,27 @@ const saveMovie = () => {
 <template>
     <div class="movie-form-div">
 
+        <!--**
+         * This section of the code defines a transition effect for a success message.
+         * 
+         * - The `<transition>` element is used to apply a named transition effect ("fade") 
+         *   when the success message is displayed or removed.
+         * - The `success_message` variable is expected to hold the text of the success 
+         *   message, which is displayed inside the `<div>` element.
+         *-->
         <transition name="fade">
-            <div v-if="!reload">
-                <div v-if="success_message" class="success-message">
-                    {{ success_message }}
-                </div>
+            <div v-if="success_message" class="success-message">
+                {{ success_message }}
             </div>
         </transition>
 
+        <!--**
+         * This section of the Vue component handles the display of error messages using a transition effect.
+         * 
+         * - The `v-if="errors.length"` directive ensures that the error message block is only rendered if there are errors in the `errors` array.
+         * - Inside the `<ul>` element, a `<li>` is rendered for each error in the `errors` array using the `v-for` directive.
+         * - The `:key="index"` binds a unique key to each `<li>` element based on its index in the array, which helps Vue efficiently update the DOM.
+         *-->
         <transition name="fade">
             <div v-if="errors.length" class="error-message">
                 <ul>
@@ -106,7 +151,11 @@ const saveMovie = () => {
                     <label for="poster" class="form-label">Poster</label>
                     <label for="poster-type" class="form-label poster-type">(PNG,JPG,JPEG)</label>
                 </div>
-                <input id="poster" name="poster" type="file" @change="handleFileChange" accept="image/png, image/jpeg"  class="form-control" />
+                <!--
+                    The `@change` event is used to trigger the `handleFileChange` method whenever a file is selected. The 
+                    `ref="fileInput"` attribute provides a reference to this input element for programmatic access.
+                -->
+                <input id="poster" name="poster" type="file" @change="handleFileChange" ref="fileInput" accept="image/png, image/jpeg"  class="form-control" />
             </div>
     
         <button type="submit" name="submit" class="btn btn-primary">Submit</button>
@@ -120,18 +169,32 @@ const saveMovie = () => {
     color: green;
     background-color: #d4edda;
     padding: 10px;
-    margin-bottom: 10px;
     border-radius: 5px;
-    margin-left: 10px;
-    width: 99%;
+    width: 15%;
+    top: 100px;
+    right: 45px;
+    text-align: center;
+    position: fixed;
 }
 
 .error-message {
     color: red;
     background-color: #f8d7da;
     padding: 10px;
+    padding-top: 20px;
+    padding-left: 0px;
     margin-bottom: 10px;
     border-radius: 5px;
+    top: 70px;
+    right: 45px;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 26%;
+    min-height: 8%;
+    height: auto;
 }
 
 .fade-leave-active {
@@ -142,29 +205,44 @@ const saveMovie = () => {
   opacity: 0;
 }
 
-textarea {
+textarea, textarea:focus{
     width: 100%; 
     height: 200px;
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #ccc;
+    background-color: #fcfcfcdc;
+    color: #070000;
+    font-weight: bold;
 }
 
-textarea:hover {
-    border-color: #888; /* Darker border on hover */
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Slight glow effect */
+
+textarea:hover:not(:focus) {
+    border-color: #292a2c; /* Darker border on hover */
+    box-shadow: 0 0 5px rgba(247, 245, 245, 0.788); /* Slight glow effect */
+    background-color: #fcfcfcab;
 }
 
-input {
+
+input, input:focus {
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #ccc; 
+    background-color: #fcfcfcdc;
+    color: #070000;
+    font-weight: bold;
 }
 
-input:hover {
-    border-color: #888; /* Darker border on hover */
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Slight glow effect */
+#poster::file-selector-button {
+    background-color: #1b1a1a41;
 }
+
+input:hover:not(:focus) {
+    border-color: #292a2c; /* Darker border on hover */
+    box-shadow: 0 0 5px rgba(247, 245, 245, 0.788); /* Slight glow effect */
+    background-color: #fcfcfcab;
+}
+
 
 label {
     font-weight: bold;
