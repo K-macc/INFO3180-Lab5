@@ -222,7 +222,7 @@ onMounted(() => {
     right: 0;
     bottom: 0;
     width: 100%;
-    z-index: 9999;
+    z-index: 100;
 }
 
 .movie-load-light-theme {
