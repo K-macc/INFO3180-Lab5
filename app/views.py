@@ -49,7 +49,7 @@ def movies():
          
     return jsonify({
         "errors": form_errors(form)
-    }),400
+    })
     
 @app.route('/api/v1/csrf-token', methods=['GET'])
 def get_csrf():
@@ -94,7 +94,7 @@ def form_errors(form):
                 )
             error_messages.append(message)
 
-    return error_messages,404
+    return error_messages
 
 @app.route('/<file_name>.txt')
 def send_text_file(file_name):

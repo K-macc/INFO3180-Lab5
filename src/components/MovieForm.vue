@@ -94,7 +94,6 @@ const saveMovie = () => {
             }
         })
         .catch(function (error) {
-            emit('refreshPage');
             console.error("Fetch error: ", error);
         });
 }
