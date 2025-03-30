@@ -172,7 +172,7 @@ onMounted(() => {
 
 .movie-dark-theme:hover {
   transform: scale(1.05); /* Slightly enlarges the card */
-  box-shadow: 0px 0px 10px #ffcc00; /* Increases shadow */
+  box-shadow: 0px 0px 10px rgb(146, 144, 144); /* Increases shadow */
   border-color: #817e7e96; /* Changes border color */
   background: #ffcc00 ;
 }

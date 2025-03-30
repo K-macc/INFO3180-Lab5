@@ -20,7 +20,7 @@ import os
 
 @app.route('/')
 def index():
-    return jsonify(message="This is the beginning of our API")
+    return jsonify(message="This is the beginning of our API"),200
 
 @app.route('/api/v1/movies', methods = ['POST'])
 def movies():
@@ -58,7 +58,7 @@ def get_csrf():
 
 @app.route("/api/v1/posters/<filename>")
 def get_posters(filename):
-    return send_from_directory(os.path.join(os.getcwd(), app.config['UPLOAD_FOLDER']), filename)
+    return send_from_directory(os.path.join(os.getcwd(), app.config['UPLOAD_FOLDER']), filename), 200
 
 
 @app.route("/api/v1/movies", methods=['GET'])
@@ -74,7 +74,7 @@ def add_movies():
             "poster": f"/api/v1/posters/{movie.poster}"
         })
 
-    return jsonify({"movies": movies_list})
+    return jsonify({"movies": movies_list}), 200
 
 
 ###
@@ -94,7 +94,7 @@ def form_errors(form):
                 )
             error_messages.append(message)
 
-    return error_messages
+    return error_messages,404
 
 @app.route('/<file_name>.txt')
 def send_text_file(file_name):
