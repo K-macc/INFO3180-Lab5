@@ -16,14 +16,14 @@ const isDarkmode = ref(false);
  * - Adds the 'light-mode' class and removes the 'dark-mode' class when switching to light mode.
  */
 const toggleTheme = () => {
-    isDarkmode.value = !isDarkmode.value;
-    if (isDarkmode.value){
-        document.body.classList.add('dark-mode');
-        document.body.classList.remove('light-mode');
-    } else {
-        document.body.classList.remove('dark-mode');
-        document.body.classList.add('light-mode');
-    }
+  isDarkmode.value = !isDarkmode.value;
+  if (isDarkmode.value){
+      document.body.classList.add('dark-mode');
+      document.body.classList.remove('light-mode');
+  } else {
+      document.body.classList.remove('dark-mode');
+      document.body.classList.add('light-mode');
+  }
 }
 
 /**
@@ -45,7 +45,7 @@ const state = computed (() => {
   <AppHeader :isDarkmode="isDarkmode" />
 
   <main>
-    <button class="btn toggle" :class="state" @click="toggleTheme">Switch Mode</button>
+    <button class="btn btn-toggle" :class="state" @click="toggleTheme">Switch Mode</button>
     <RouterView :isDarkmode="isDarkmode" />
   </main>
 
@@ -70,10 +70,22 @@ body.light-mode {
     color: black;
 }
 
-.toggle {
+.btn-toggle {
   top: 70px;
   right: 10px;
   position: absolute;
+}
+
+.btn-toggle.btn-dark:hover {
+  background-color: lightgray;
+  color: black;
+  border-color: lightgray;
+}
+
+.btn-toggle.btn-light:hover {
+  background-color: black;
+  color: #fff;
+  border-color: black;
 }
 
 </style>
